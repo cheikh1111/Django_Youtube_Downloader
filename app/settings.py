@@ -29,6 +29,7 @@ ALLOWED_HOSTS = [
     "c.com",
     "localhost",
     "127.0.0.1",
+    "youtube-downloader-tgko.onrender.com",
 ]
 
 
