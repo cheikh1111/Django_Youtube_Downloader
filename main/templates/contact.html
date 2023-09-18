@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+<div class="content">
+    <h1>Hi , I'm Cheikhsidiya</h1>
+    <div>
+        <p>
+            Contact Form
+            <span class="material-symbols-outlined"> arrow_drop_down </span>
+        </p>
+        <form method="post">
+            <input name="e" type="email" placeholder="Email">
+            <textarea name="m" id="" cols="30" rows="10" required placeholder="Message"></textarea>
+        </form>
+    </div>
+
+    {% endblock %}

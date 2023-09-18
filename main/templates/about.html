@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% load static%}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+
+<div class="content">
+    <h1>Hi , I'm Cheikhsidiya</h1>
+    <div>
+        <p>
+            Career Goals
+            <span class="material-symbols-outlined"> arrow_drop_down </span>
+        </p>
+        <ul>
+            <li>
+                Aspiring to become a successful software developer, specializing in
+                building robust and scalable applications.
+            </li>
+            <li>
+                Seeking freelance opportunities to gain practical experience and
+                contribute to real-world projects.
+            </li>
+        </ul>
+    </div>
+
+    <div>
+        <p>
+            Interests
+            <span class="material-symbols-outlined">arrow_drop_down</span>
+        </p>
+        <ul>
+            <li>
+                Passionate about exploring new technologies and staying up-to-date with
+                the latest advancements in software development.
+            </li>
+            <li>
+                nterested in freelance jobs to enhance skills, gain professional
+                exposure, and work with diverse clients.
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
