@@ -81,6 +81,7 @@ button[type="submit"] {
     width: 200px;
     height: 30px;
     font-size: large;
+    cursor: pointer;
 }
 
 .resolutions {
@@ -113,9 +114,11 @@ button[type="submit"] {
 /* Loading animation */
 .load {
     width: 100%;
-    margin: 20px auto;
+    margin: 10px auto;
     display: none;
+    height: 60px;
     justify-content: center;
+    align-items: center;
 }
 
 .load div {
@@ -140,8 +143,8 @@ button[type="submit"] {
 
 @keyframes up-and-down {
     to {
-        transform: translateY(-10px);
-        opacity: 0.2s;
+        transform: translateY(-15px);
+        opacity: 0.2;
     }
 }
 
@@ -162,7 +165,7 @@ button[type="submit"] {
     }
     .video img {
         max-width: initial;
-        width: 90%;
+        width: 100%;
         margin-inline: auto;
     }
     .video > span {

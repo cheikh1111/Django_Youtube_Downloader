@@ -12,7 +12,7 @@
     <form method="post">
         <div class="container">
             {% csrf_token %}
-            <input type="url" name="url" id="url" placeholder="Video URL">
+            <input type="url" name="url" id="url" placeholder="Video URL" required autofocus>
             <button type="submit" class="material-symbols-outlined download">Download</button>
         </div>
 

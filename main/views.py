@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
+
 from django.urls import reverse
-from .utils import video_infos, get_video, get_audio
+from .utils import video_infos, get_video, get_audio, convert_webm_chunk_to_mp3
+from .models import Download
+from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
 import os
 import requests
 
@@ -129,8 +131,8 @@ def download_video(request):
         resolution = request.GET.get("res")
         if url and resolution:
             video = get_video(url, resolution, "mp4")
-            url = video.url
-            r = requests.get(url, stream=True)
+            video_url = video.url
+            r = requests.get(video_url, stream=True)
 
             def generate():
                 try:
@@ -142,45 +144,52 @@ def download_video(request):
                 finally:
                     r.close()
 
-            response = StreamingHttpResponse(generate(), content_type="video/mp4")
-            response["Content-Disposition"] = f"attachment; filename={video.title}.mp4"
+            response = StreamingHttpResponse(generate())
+            response[
+                "Content-Disposition"
+            ] = f'attachment; filename="{video.title}.mp4"'.encode("utf-8")
+            response["Content-Type"] = "application/octet-stream"
             response["Content-Length"] = str(video.filesize)
+
+            new_Download = Download(url=url, ip=request.META["REMOTE_ADDR"])
+            new_Download.save()
             return response
         else:
             return
     else:
-        return HttpResponse("Method Not Allowed", status_code=405)
+        return HttpResponse("Method Not Allowed", status=405)
 
 
 def download_audio(request):
     if request.method == "GET":
         url = request.GET.get("url")
         if url:
-            audio = get_audio(url, "mp3")
+            audio = get_audio(url, "webm")
             if audio:
-                url = audio.url
-                r = requests.get(url, stream=True)
+                audio_url = audio.url
+                r = requests.get(audio_url, stream=True)
 
                 def generate():
-                    try:
-                        for chunk in r.iter_content(chunk_size=1024):
-                            if chunk:
-                                yield chunk
-                    except Exception as e:
-                        print("Error :", e)
-                    finally:
-                        r.close()
+                    for chunk in r.iter_content(chunk_size=1024):
+                        if chunk:
+                            # chunk = convert_webm_chunk_to_mp3(chunk)
+                            yield chunk
 
-                response = StreamingHttpResponse(generate(), content_type="audio/mpeg")
+                response = StreamingHttpResponse(
+                    generate(), content_type="application/octet-stream"
+                )
                 response[
                     "Content-Disposition"
-                ] = f"attachment; filename={audio.title}.mp3"
+                ] = f"attachment; filename={audio.title}.mp3".encode()
                 response["Content-Length"] = str(audio.filesize)
+                response["Content-Type"] = "application/octet-stream"
+                new_Download = Download(url=url, ip=request.META["REMOTE_ADDR"])
+                new_Download.save()
                 return response
         else:
-            return "Please include the url to download"
+            return HttpResponse("Please include the url to download", status=400)
     else:
-        return HttpResponse("Method Not Allowed", status_code=405)
+        return HttpResponse("Method Not Allowed", status=405)
 
 
 def custom_exception_handler(request, exception):

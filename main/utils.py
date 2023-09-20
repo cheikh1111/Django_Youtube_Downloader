@@ -1,5 +1,9 @@
 from pytube import YouTube
+from pydub import AudioSegment
+from io import BytesIO
+import requests
 import re
+import asyncio
 
 
 def convert_link(input_link):
@@ -33,10 +37,11 @@ def video_infos(url):
     video_streams = all_streams.filter(
         file_extension="mp4", progressive=True, type="video"
     )
-    audio = all_streams.filter(file_extension="mp3", progressive=True)
+    audio = all_streams.filter(only_audio=True, file_extension="webm").first()
     resolutions = [video.resolution for video in video_streams if video.resolution]
     if audio:
-        resolutions.append(audio)
+        if audio.filesize_mb < 35:
+            resolutions.append("mp3")
     return {
         "title": yt.title,
         "thumbnail": yt.thumbnail_url,
@@ -57,6 +62,25 @@ def get_video(url, res, extension):
 def get_audio(url, extension):
     url = convert_link(url)
     yt = YouTube(url)
-    streams = yt.streams.filter(only_audio=True, progressive=True)
-    audio = streams.first()
+    streams = yt.streams.filter(only_audio=True, file_extension=extension)
+    audio_stream = streams.first()
+    r = requests.get(audio_stream.url)
+    audio_data = BytesIO(r.content)
+    audio_segment = AudioSegment.from_file(audio_data, format=extension)
+    mp3_buffer = BytesIO()
+    audio_segment.export(mp3_buffer, format="mp3")
+    audio = mp3_buffer.getvalue()
     return audio
+
+
+def convert_webm_chunk_to_mp3(chunk):
+    try:
+        # Load the 'webm' chunk as an AudioSegment
+        audio_chunk = AudioSegment.from_file(chunk, format="webm")
+
+        # Convert the chunk to 'mp3' format
+        mp3_chunk = audio_chunk.export(format="mp3")
+
+        return mp3_chunk
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
