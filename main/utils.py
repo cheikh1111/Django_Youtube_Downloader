@@ -64,23 +64,12 @@ def get_audio(url, extension):
     yt = YouTube(url)
     streams = yt.streams.filter(only_audio=True, file_extension=extension)
     audio_stream = streams.first()
-    r = requests.get(audio_stream.url)
-    audio_data = BytesIO(r.content)
-    audio_segment = AudioSegment.from_file(audio_data, format=extension)
-    mp3_buffer = BytesIO()
-    audio_segment.export(mp3_buffer, format="mp3")
-    audio = mp3_buffer.getvalue()
-    return audio
+    return audio_stream
 
 
 def convert_webm_chunk_to_mp3(chunk):
-    try:
-        # Load the 'webm' chunk as an AudioSegment
-        audio_chunk = AudioSegment.from_file(chunk, format="webm")
-
-        # Convert the chunk to 'mp3' format
-        mp3_chunk = audio_chunk.export(format="mp3")
-
-        return mp3_chunk
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+    chunk = BytesIO(chunk)
+    audio_segment = AudioSegment.from_file(chunk, format="webm")
+    mp3_buffer = BytesIO()
+    mp3_chunk = audio_segment.export(mp3_buffer, format="mp3")
+    return mp3_buffer.getvalue()

@@ -2,3 +2,4 @@ django
 requests
 pytube
 gunicorn
+python-ffmpeg

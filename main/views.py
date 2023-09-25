@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from .utils import video_infos, get_video, get_audio, convert_webm_chunk_to_mp3
 from .models import Download
-from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
+from django.http import JsonResponse, HttpResponse, StreamingHttpResponse, FileResponse
 import os
 import requests
 
@@ -166,22 +166,17 @@ def download_audio(request):
         if url:
             audio = get_audio(url, "webm")
             if audio:
-                audio_url = audio.url
-                r = requests.get(audio_url, stream=True)
+                r = requests.get(audio.url)
 
                 def generate():
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:
-                            # chunk = convert_webm_chunk_to_mp3(chunk)
-                            yield chunk
+                            chunk = convert_webm_chunk_to_mp3(chunk)
+                            if chunk:
+                                yield chunk
 
-                response = StreamingHttpResponse(
-                    generate(), content_type="application/octet-stream"
-                )
-                response[
-                    "Content-Disposition"
-                ] = f"attachment; filename={audio.title}.mp3".encode()
-                response["Content-Length"] = str(audio.filesize)
+                response = StreamingHttpResponse(generate())
+                response["Content-Length"] = str(audio["filesize"])
                 response["Content-Type"] = "application/octet-stream"
                 new_Download = Download(url=url, ip=request.META["REMOTE_ADDR"])
                 new_Download.save()
