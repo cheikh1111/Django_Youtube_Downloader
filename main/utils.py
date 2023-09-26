@@ -1,5 +1,5 @@
 from pytube import YouTube
-from pydub import AudioSegment
+
 from io import BytesIO
 import requests
 import re
@@ -65,11 +65,3 @@ def get_audio(url, extension):
     streams = yt.streams.filter(only_audio=True, file_extension=extension)
     audio_stream = streams.first()
     return audio_stream
-
-
-def convert_webm_chunk_to_mp3(chunk):
-    chunk = BytesIO(chunk)
-    audio_segment = AudioSegment.from_file(chunk, format="webm")
-    mp3_buffer = BytesIO()
-    mp3_chunk = audio_segment.export(mp3_buffer, format="mp3")
-    return mp3_buffer.getvalue()

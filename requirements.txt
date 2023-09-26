@@ -3,3 +3,7 @@ requests
 pytube
 gunicorn
 python-ffmpeg
+django-jazzmin
+psycopg2-binary
+python-dotenv
+dj-database-url
