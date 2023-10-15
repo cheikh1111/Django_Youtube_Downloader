@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "youtube-downloader-tgko.onrender.com",
+    "192.168.100.66",
 ]
 
 
