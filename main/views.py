@@ -101,7 +101,7 @@ def home(request):
     response = HttpResponse(render(request, os.path.join(path, "home.html")))
     host = request.META.get("HTTP_HOST", "")
     response["Access-Control-Allow-Origin"] = f"http://{host}"
-    client_ip = get_client_ip()
+    client_ip = get_client_ip(request)
     requests.get(
         "https://ubuntu-nftqj.run-eu-central1.goorm.site",
         {"ip": client_ip},
