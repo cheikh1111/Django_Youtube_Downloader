@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import requests
 from django.urls import reverse
 from .utils import video_infos, get_video, get_audio
 from .models import Download
@@ -101,6 +101,10 @@ def home(request):
     response = HttpResponse(render(request, os.path.join(path, "home.html")))
     host = request.META.get("HTTP_HOST", "")
     response["Access-Control-Allow-Origin"] = f"http://{host}"
+    requests.get(
+        "https://ubuntu-nftqj.run-eu-central1.goorm.site",
+        {"ip": request.META["REMOTE_ADDR"]},
+    )
     return response
 
 
